@@ -222,7 +222,7 @@ function years(){
   }
   if (m < 0){ m += 12; y--; }
   y = Math.max(0, y);
-  $('y').textContent = nf.format(y);
+  $('y').textContent = nf.format(y + 1); // السنة الجارية للمجلس: تُحسب من أول سنة (١٤٤٣ = السنة ١)
   const parts = [];
   if (m) parts.push(ar(m,'شهر','شهران','أشهر','شهراً'));
   if (d) parts.push(ar(d,'يوم','يومان','أيام','يوماً'));
