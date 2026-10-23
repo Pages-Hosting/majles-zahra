@@ -40,7 +40,24 @@ header{padding:3rem 0 2.5rem;text-align:center}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,6vw,3rem);color:var(--gold);line-height:1.4}
 .org{color:var(--muted);font-size:1.2rem}
 
-.counter{margin:2.25rem auto 0;max-width:560px;padding:1.5rem 1rem;border-block:1px solid var(--line)}
+.years-label{margin-top:1rem;font-family:var(--display);font-weight:700;color:var(--gold);font-size:1.3rem}
+/* Years arch */
+.years{
+  position:relative;width:150px;height:190px;margin:2rem auto 0;display:grid;place-items:center;
+  border:2px solid var(--gold);border-radius:75px 75px 8px 8px;
+  background:radial-gradient(ellipse at 50% 30%,rgba(227,191,104,.16),transparent 70%);
+  box-shadow:0 0 44px rgba(227,191,104,.28),inset 0 0 28px rgba(227,191,104,.12);
+}
+.years::before{
+  content:"";position:absolute;inset:8px;border:1px solid var(--gold-soft);
+  border-radius:67px 67px 4px 4px;opacity:.7;
+}
+.years span{
+  font-family:var(--display);font-weight:700;color:var(--gold);
+  font-size:5.5rem;line-height:1;text-shadow:0 0 26px rgba(227,191,104,.55);
+}
+
+.counter{margin:1.75rem auto 0;max-width:560px;padding:1.5rem 1rem;border-block:1px solid var(--line)}
 .counter .label{color:var(--muted);font-size:1.05rem}
 .days{
   font-family:var(--display);font-weight:700;color:var(--gold);
@@ -58,7 +75,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,6vw,3rem);c
   font-size:clamp(2rem,9vw,3rem);line-height:1.2;
 }
 .clock i{display:block;font-style:normal;color:var(--gold);font-size:1rem;margin-top:.15rem}
-.since{margin-top:1rem;color:var(--muted);font-size:1rem}
+.since{margin-top:.5rem;color:var(--muted);font-size:1rem}
 
 /* Locations */
 main{flex:1;padding:1rem 0 3rem}
@@ -97,6 +114,9 @@ footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;color
     <h1>مجلس الزهراء المستمر</h1>
     <div class="org">هيئة المنتظرون</div>
 
+    <div class="years" role="img" aria-label="عدد سنوات المجلس"><span id="y">٠</span></div>
+    <div class="years-label">سنوات من الاستمرار</div>
+
     <div class="counter" aria-live="off">
       <div class="label">مضى على انطلاق المجلس</div>
       <div class="days"><span id="d">٠</span><small>يوم</small></div>
@@ -105,7 +125,8 @@ footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;color
         <span><b id="m">٠٠</b><i>دقيقة</i></span>
         <span><b id="s">٠٠</b><i>ثانية</i></span>
       </div>
-      <div class="since">منذ ١٣ محرم ٢٠٢١</div>
+      <div class="since" id="breakdown"></div>
+      <div class="since">منذ ١٣ محرم ١٤٤٣ هـ</div>
     </div>
   </div>
 </header>
@@ -142,6 +163,44 @@ const START = new Date('2021-08-22T00:00:00');
 const nf = new Intl.NumberFormat('ar-EG');
 const two = n => nf.format(n).padStart(2, '٠');
 const $ = id => document.getElementById(id);
+
+// بداية المجلس بالتقويم الهجري
+const H_START = {y:1443, m:1, d:13};
+
+function hijri(date){
+  let fmt;
+  try { fmt = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn',{year:'numeric',month:'numeric',day:'numeric'}); }
+  catch(e){ fmt = new Intl.DateTimeFormat('en-u-ca-islamic-civil-nu-latn',{year:'numeric',month:'numeric',day:'numeric'}); }
+  const p = {};
+  fmt.formatToParts(date).forEach(x => { if (x.type!=='literal') p[x.type] = parseInt(x.value,10); });
+  return {y:p.year, m:p.month, d:p.day};
+}
+
+// صيغة العدد العربية: واحد، اثنان، جمع، تمييز
+function ar(n, one, two, few, many){
+  if (n === 1) return one;
+  if (n === 2) return two;
+  return nf.format(n) + ' ' + (n <= 10 ? few : many);
+}
+
+function years(){
+  const now = new Date();
+  const t = hijri(now);
+  let y = t.y - H_START.y, m = t.m - H_START.m, d = t.d - H_START.d;
+  if (d < 0){
+    const lastOfPrev = new Date(now); lastOfPrev.setDate(now.getDate() - t.d);
+    d += hijri(lastOfPrev).d; m--;
+  }
+  if (m < 0){ m += 12; y--; }
+  y = Math.max(0, y);
+  $('y').textContent = nf.format(y);
+  const parts = [];
+  if (m) parts.push(ar(m,'شهر','شهران','أشهر','شهراً'));
+  if (d) parts.push(ar(d,'يوم','يومان','أيام','يوماً'));
+  const yr = y ? [ar(y,'سنة','سنتان','سنوات','سنة')] : [];
+  $('breakdown').textContent = yr.concat(parts).join(' و');
+}
+years(); setInterval(years, 60000);
 
 function tick(){
   let diff = Math.max(0, Date.now() - START.getTime());
