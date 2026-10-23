@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مجلس الزهراء المستمر – هيئة المنتظرون</title>
+<style>
+@font-face{
+  font-family:'Thmanyah';font-weight:400;font-style:normal;font-display:swap;
+  src:local('Thmanyah Sans'),local('Thmanyah Sans Regular'),
+      url('fonts/Thmanyah-Regular.woff2') format('woff2'),
+      url('fonts/Thmanyah-Regular.otf') format('opentype');
+}
+@font-face{
+  font-family:'Thmanyah';font-weight:700;font-style:normal;font-display:swap;
+  src:local('Thmanyah Sans Bold'),
+      url('fonts/Thmanyah-Bold.woff2') format('woff2'),
+      url('fonts/Thmanyah-Bold.otf') format('opentype');
+}
+:root{
+  --bg:#0c0a08; --surface:#15110d; --line:#3a2e1c;
+  --gold:#e3bf68; --gold-soft:#b99a52; --text:#efe6d2; --muted:#a39574;
+  --display:'Thmanyah',Tahoma,sans-serif; --body:'Thmanyah',Tahoma,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg) radial-gradient(ellipse at 50% 0,#2a2013 0,transparent 60%) no-repeat;
+  color:var(--text); font-family:var(--body); font-size:1.05rem; line-height:1.9;
+  min-height:100vh; display:flex; flex-direction:column;
+}
+.wrap{width:min(1000px,100% - 2.5rem);margin-inline:auto}
+
+/* Header */
+header{padding:3rem 0 2.5rem;text-align:center}
+.logo{
+  width:min(210px,52vw);aspect-ratio:1;border-radius:50%;object-fit:cover;
+  box-shadow:0 0 60px rgba(227,191,104,.18);margin-bottom:1.25rem;
+}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,6vw,3rem);color:var(--gold);line-height:1.4}
+.org{color:var(--muted);font-size:1.2rem}
+
+.counter{margin:2.25rem auto 0;max-width:560px;padding:1.5rem 1rem;border-block:1px solid var(--line)}
+.counter .label{color:var(--muted);font-size:1.05rem}
+.days{
+  font-family:var(--display);font-weight:700;color:var(--gold);
+  font-size:clamp(3.6rem,17vw,6.5rem);line-height:1.2;
+  text-shadow:0 0 28px rgba(227,191,104,.35);font-variant-numeric:tabular-nums;
+}
+.days small{font-size:.28em;font-weight:500;color:var(--gold-soft);margin-inline-start:.4em;text-shadow:none}
+.clock{display:flex;justify-content:center;gap:.75rem;direction:rtl;margin-top:.75rem;font-variant-numeric:tabular-nums}
+.clock span{
+  flex:1;max-width:120px;padding:.75rem .25rem .6rem;
+  background:var(--surface);border:1px solid var(--gold-soft);border-radius:12px;
+}
+.clock b{
+  display:block;font-family:var(--body);font-weight:700;color:var(--text);
+  font-size:clamp(2rem,9vw,3rem);line-height:1.2;
+}
+.clock i{display:block;font-style:normal;color:var(--gold);font-size:1rem;margin-top:.15rem}
+.since{margin-top:1rem;color:var(--muted);font-size:1rem}
+
+/* Locations */
+main{flex:1;padding:1rem 0 3rem}
+h2{font-family:var(--display);font-weight:700;font-size:1.7rem;color:var(--gold);text-align:center;margin-bottom:1.5rem}
+.places{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.place{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:1.75rem 1.5rem;display:flex;flex-direction:column;gap:.5rem;
+}
+.season{color:var(--gold-soft);font-size:1rem}
+.place h3{font-family:var(--display);font-weight:700;font-size:1.9rem;color:var(--text);line-height:1.5}
+.place p{color:var(--muted);flex:1}
+.btn{
+  align-self:flex-start;margin-top:.75rem;padding:.55rem 1.4rem;border-radius:999px;
+  border:1px solid var(--gold);color:var(--gold);text-decoration:none;
+  font-family:var(--body);font-weight:500;font-size:1rem;transition:background .2s,color .2s;
+}
+.btn:hover{background:var(--gold);color:#1a1409}
+.btn:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+
+footer{border-top:1px solid var(--line);padding:1.5rem 0;text-align:center;color:var(--muted);font-size:1rem}
+
+@media (max-width:680px){
+  .places{grid-template-columns:1fr}
+  .clock{gap:.5rem}
+  .btn{align-self:stretch;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <img class="logo" src="logo.jpeg" alt="شعار مجلس الزهراء المستمر">
+    <h1>مجلس الزهراء المستمر</h1>
+    <div class="org">هيئة المنتظرون</div>
+
+    <div class="counter" aria-live="off">
+      <div class="label">مضى على انطلاق المجلس</div>
+      <div class="days"><span id="d">٠</span><small>يوم</small></div>
+      <div class="clock">
+        <span><b id="h">٠٠</b><i>ساعة</i></span>
+        <span><b id="m">٠٠</b><i>دقيقة</i></span>
+        <span><b id="s">٠٠</b><i>ثانية</i></span>
+      </div>
+      <div class="since">منذ ١٣ محرم ٢٠٢١</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h2>مواقع المجلس</h2>
+    <div class="places">
+      <article class="place">
+        <span class="season">التوقيت الصيفي</span>
+        <h3>الحديقة</h3>
+        <p>اكتب هنا وصف الموقع أو أقرب نقطة دالّة.</p>
+        <a class="btn" href="https://maps.app.goo.gl/vagSvDFEJWVfsAB78" target="_blank" rel="noopener">فتح الموقع على الخريطة</a>
+      </article>
+      <article class="place">
+        <span class="season">التوقيت الشتوي</span>
+        <h3>الحسينية</h3>
+        <p>اكتب هنا وصف الموقع أو أقرب نقطة دالّة.</p>
+        <a class="btn" href="https://maps.app.goo.gl/8HYFzQ9AAj1bJXqn8" target="_blank" rel="noopener">فتح الموقع على الخريطة</a>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">هيئة المنتظرون – مجلس الزهراء المستمر</div>
+</footer>
+
+<script>
+// ===== إعدادات قابلة للتعديل =====
+// تاريخ بداية المجلس (سنة-شهر-يوم). عدّله إذا كان التاريخ الفعلي مختلفاً.
+const START = new Date('2021-08-22T00:00:00');
+
+const nf = new Intl.NumberFormat('ar-EG');
+const two = n => nf.format(n).padStart(2, '٠');
+const $ = id => document.getElementById(id);
+
+function tick(){
+  let diff = Math.max(0, Date.now() - START.getTime());
+  const sec = Math.floor(diff / 1000);
+  $('d').textContent = nf.format(Math.floor(sec / 86400));
+  $('h').textContent = two(Math.floor(sec % 86400 / 3600));
+  $('m').textContent = two(Math.floor(sec % 3600 / 60));
+  $('s').textContent = two(sec % 60);
+}
+tick(); setInterval(tick, 1000);
+</script>
+</body>
+</html>
